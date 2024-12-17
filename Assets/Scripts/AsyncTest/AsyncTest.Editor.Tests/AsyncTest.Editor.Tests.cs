@@ -26,6 +26,17 @@ namespace AsyncTest.Editor.Tests
             Assert.That(sampleComponent.Started, Is.EqualTo(false/*I learned that Unity doesn't call the lifecycle methods like Awake() and Start()*/));
         }
 
+        [Test]
+        public async Task AwaitableRunOnThreadTest()
+        {
+            string persistentDataPath = string.Empty;
+            await Awaitable.BackgroundThreadAsync();
+            Assert.Throws<UnityException>(() => persistentDataPath += Application.persistentDataPath);
+            await Awaitable.MainThreadAsync();
+            Assert.DoesNotThrow(() => persistentDataPath += Application.persistentDataPath);
+            Assume.That(persistentDataPath, Is.Not.Empty);
+        }
+
         [UnityTest]
         public IEnumerator TestsWithEnumeratorPasses() // Unity created.
         {
