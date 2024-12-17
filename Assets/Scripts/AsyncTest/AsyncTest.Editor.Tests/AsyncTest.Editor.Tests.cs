@@ -21,9 +21,9 @@ namespace AsyncTest.Editor.Tests
         {
             var go = new GameObject("AsyncTest with SampleComponent");
             using var sampleComponent = go.AddComponent<SampleComponent>();
-            Assert.That(sampleComponent.Started, Is.EqualTo(false)); // This is not a test, just a pre-condition check.
+            Assume.That(sampleComponent.Started, Is.EqualTo(false));
             await Awaitable.NextFrameAsync(CancellationToken.None);
-            Assert.That(sampleComponent.Started, Is.EqualTo(true));
+            Assert.That(sampleComponent.Started, Is.EqualTo(false/*I learned that Unity doesn't call the lifecycle methods like Awake() and Start()*/));
         }
 
         [UnityTest]
@@ -35,6 +35,7 @@ namespace AsyncTest.Editor.Tests
         internal class SampleComponent : MonoBehaviour, IDisposable
         {
             public bool Started = false;
+            private void Awake() { Debug.Log("Awake"); }
             private void Start()
             {
                 Started = true;
